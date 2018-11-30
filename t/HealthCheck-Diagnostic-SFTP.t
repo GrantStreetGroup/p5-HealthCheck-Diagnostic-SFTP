@@ -59,7 +59,8 @@ my $run_check_or_error = sub {
     return $@;
 };
 
-# Check that we require the host.
+# Check that we require the host, but the other parameters
+# can be passed in as optional parameters.
 {
     my %default = ( host => 'good-host' );
     like $run_check_or_error->(), qr/No host/,
@@ -67,6 +68,35 @@ my $run_check_or_error = sub {
     eq_or_diff( $run_check_or_error->( %default ),
         [ 'OK', 'Successful connection for good-host SFTP' ],
         'Can run check with only host.' );
+
+    eq_or_diff( $run_check_or_error->( %default, user => 'us' ),
+        [ 'OK', 'Successful connection for us@good-host SFTP' ],
+        'Can run check with only host and user.' );
+}
+
+# Check that the description is correctly displayed with the supplied
+# parameters.
+{
+    is $run_check_or_error->(
+        host => 'good-host',
+    )->[1], 'Successful connection for good-host SFTP',
+        'Host is in description when specified.';
+    is $run_check_or_error->(
+        host => 'good-host',
+        user => 'user',
+    )->[1], 'Successful connection for user@good-host SFTP',
+        'Host and user is in the description when specified.';
+    is $run_check_or_error->(
+        host => 'good-host',
+        user => 'user',
+        name => 'Type1',
+    )->[1], 'Successful connection for Type1 (user@good-host) SFTP',
+        'Host, user, and name are in the description when specified.';
+    is $run_check_or_error->(
+        host => 'good-host',
+        name => 'Type2',
+    )->[1], 'Successful connection for Type2 (good-host) SFTP',
+        'Host and name are in the description when specified.';
 }
 
 done_testing;

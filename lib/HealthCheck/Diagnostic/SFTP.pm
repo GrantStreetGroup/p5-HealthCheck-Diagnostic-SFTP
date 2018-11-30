@@ -42,7 +42,10 @@ sub run {
     my $host     = $params{host};
 
     # Get our description of the connection.
-    my $description = "$host SFTP";
+    my $user        = $params{user};
+    my $name        = $params{name};
+    my $target      = ( $user ? $user.'@' : '' ).$host;
+    my $description = $name ? "$name ($target) SFTP" : "$target SFTP";
 
     return {
         status => 'OK',
@@ -58,14 +61,25 @@ __END__
 =head1 DESCRIPTION
 
 This diagnostic allows a process to test SFTP connectivity to a server.
-You can specify the host and the rest is handled by the diagnostic.
+You can specify the host and additional parameters and the rest is
+handled by the diagnostic.
 
 =head1 ATTRIBUTES
+
+=head2 name
+
+A descriptive name for the connection test.
+This gets populated in the resulting C<info> tag.
 
 =head2 host
 
 The server name to connect to for the test.
 This is required.
+
+=head2 user
+
+Optional argument.
+Represents the authentication user credential for the host.
 
 =head1 DEPENDENCIES
 
