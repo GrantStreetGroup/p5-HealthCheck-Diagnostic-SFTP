@@ -41,6 +41,7 @@ sub check {
 sub run {
     my ($self, %params) = @_;
     my $host     = $params{host};
+    my $callback = $params{callback};
 
     # Get our description of the connection.
     my $user        = $params{user};
@@ -63,10 +64,28 @@ sub run {
         info   => "Error for $description: $@",
     } if $@;
 
-    # No errors were returned so it must be a successful result.
+    # No errors were returned so it must be a successful result,
+    # unless we want to run a callback.
     return {
         status => 'OK',
         info   => "Successful connection for $description",
+    } unless $callback;
+
+    # Try to run a callback on the instance if one is provided.
+    my $result;
+    eval {
+        local $SIG{__DIE__};
+        $result = $callback->( $sftp );
+    };
+    return {
+        status => 'CRITICAL',
+        info   => "Error in running callback for $description: $@",
+    } if $@;
+
+    # Return the callback result hash, or a generic success message.
+    return ref $result eq 'HASH' ? $result : {
+        status => 'OK',
+        info   => "Successful connection and callback for $description",
     };
 }
 
@@ -80,6 +99,8 @@ __END__
 This diagnostic allows a process to test SFTP connectivity to a server.
 You can specify the host and additional parameters and the rest is
 handled by the diagnostic.
+Additionally, you can send in a callback to run after connecting for more
+checks.
 
 =head1 ATTRIBUTES
 
@@ -92,6 +113,12 @@ This gets populated in the resulting C<info> tag.
 
 The server name to connect to for the test.
 This is required.
+
+=head2 callback
+
+An anonymous sub that can get run after a conneciton is made to the
+host. This sub takes in one argument, the L<Net::SFTP> instance that
+war recently created.
 
 =head2 user
 

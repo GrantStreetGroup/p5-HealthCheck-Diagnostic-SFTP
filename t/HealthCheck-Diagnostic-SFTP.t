@@ -133,4 +133,44 @@ my $run_check_or_error = sub {
         'Connection error is displayed in info message.';
 }
 
+# Test that we properly support callbacks.
+{
+    my @data;
+    eq_or_diff(
+        $run_check_or_error->(
+            host     => 'good-host',
+            callback => sub { push @data, \@_ },
+        ),
+        [ 'OK', 'Successful connection and callback for good-host SFTP' ],
+        'Generic result hashref for successful callback without return.',
+    );
+    is scalar( @data ), 1,
+        'The callback is only called once.';
+    is scalar( @{ $data[0] } ), 1,
+        'Only one argument is passed to the callback.';
+    is ref $data[0][0], 'Net::SFTP',
+        'The SFTP instance is passed to the callback.';
+
+    eq_or_diff(
+        $run_check_or_error->(
+            host     => 'good-host',
+            callback => sub {
+                return { info => 'custom_info', status => 'WARNING' };
+            },
+        ),
+        [ 'WARNING', 'custom_info' ],
+        'Custom result hashref for successful callback with return hash.',
+    );
+
+    my $result = $run_check_or_error->(
+        host     => 'good-host',
+        callback => sub { die 'Nice try!' },
+    );
+    is $result->[0], 'CRITICAL',
+        'CRITICAL result status for an error produced in callback.';
+    like $result->[1],
+        qr/Error in running callback for good-host SFTP: Nice try!/,
+        'Return error in info message for an error produced in callback.';
+}
+
 done_testing;
