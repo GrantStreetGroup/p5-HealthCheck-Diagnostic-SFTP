@@ -24,6 +24,13 @@ sub new {
 
 sub check {
     my ($self, %params) = @_;
+
+    # Allow the diagnostic to be called as a class as well.
+    if ( ref $self ) {
+        $params{$_} = $self->{$_}
+            foreach grep { ! defined $params{$_} } keys %$self;
+    }
+
     # The host is the only required parameter.
     croak "No host" unless $params{host};
 
