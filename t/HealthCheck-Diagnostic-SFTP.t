@@ -2,8 +2,21 @@ use strict;
 use warnings;
 
 use Test::More;
+use Test::MockModule;
 use Test::Differences;
 use HealthCheck::Diagnostic::SFTP;
+
+# Mock the SFTP module so that we can pretend to have good and bad hosts.
+my $mock = Test::MockModule->new( 'Net::SFTP' );
+$mock->mock( new => sub {
+    my ( $class, $host, %params ) = @_;
+
+    # In-accessible hosts should not be reached.
+    die "Net::SSH: Bad host name: $host"
+        if $host eq 'inaccessible-host';
+
+    return bless( \%params, 'Net::SFTP' );
+} );
 
 # Check that we can use HealthCheck as a class.
 {
@@ -59,7 +72,7 @@ my $run_check_or_error = sub {
     return $@;
 };
 
-# Check that we require the host, but the other parameters
+# Check that we require the host, but the other Net::SFTP parameters
 # can be passed in as optional parameters.
 {
     my %default = ( host => 'good-host' );
@@ -72,6 +85,18 @@ my $run_check_or_error = sub {
     eq_or_diff( $run_check_or_error->( %default, user => 'us' ),
         [ 'OK', 'Successful connection for us@good-host SFTP' ],
         'Can run check with only host and user.' );
+    eq_or_diff( $run_check_or_error->( %default, password => 'my_pwd' ),
+        [ 'OK', 'Successful connection for good-host SFTP' ],
+        'Can run check with only host and password.' );
+    eq_or_diff( $run_check_or_error->( %default, debug => 1 ),
+        [ 'OK', 'Successful connection for good-host SFTP' ],
+        'Can run check with only host and debug.' );
+    eq_or_diff( $run_check_or_error->( %default, warn => sub { 1 } ),
+        [ 'OK', 'Successful connection for good-host SFTP' ],
+        'Can run check with only host and warn.' );
+    eq_or_diff( $run_check_or_error->( %default, ssh_args => { a => 1 } ),
+        [ 'OK', 'Successful connection for good-host SFTP' ],
+        'Can run check with only host and ssh_args.' );
 }
 
 # Check that the description is correctly displayed with the supplied
@@ -97,6 +122,15 @@ my $run_check_or_error = sub {
         name => 'Type2',
     )->[1], 'Successful connection for Type2 (good-host) SFTP',
         'Host and name are in the description when specified.';
+}
+
+# Test that connection errors are properly caught.
+{
+    my $result = $run_check_or_error->( host => 'inaccessible-host' );
+    is $result->[0], 'CRITICAL',
+        'Connection error brings up CRITICAL status.';
+    like $result->[1], qr/Net::SSH: Bad host name: inaccessible-host/,
+        'Connection error is displayed in info message.';
 }
 
 done_testing;

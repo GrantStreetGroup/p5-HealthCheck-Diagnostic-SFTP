@@ -8,6 +8,7 @@ use strict;
 use warnings;
 
 use Carp;
+use Net::SFTP;
 
 sub new {
     my ($class, @params) = @_;
@@ -47,6 +48,22 @@ sub run {
     my $target      = ( $user ? $user.'@' : '' ).$host;
     my $description = $name ? "$name ($target) SFTP" : "$target SFTP";
 
+    # Try to connect to the host.
+    my $sftp;
+    my %args = map { $_ => $params{$_} }
+        grep { exists $params{$_} }
+        qw( user password debug warn ssh_args );
+    local $@;
+    eval {
+        local $SIG{__DIE__};
+        $sftp = Net::SFTP->new( $host, %args );
+    };
+    return {
+        status => 'CRITICAL',
+        info   => "Error for $description: $@",
+    } if $@;
+
+    # No errors were returned so it must be a successful result.
     return {
         status => 'OK',
         info   => "Successful connection for $description",
@@ -78,11 +95,32 @@ This is required.
 
 =head2 user
 
-Optional argument.
+Optional argument that can get passed into the L<Net::SFTP> constructor.
 Represents the authentication user credential for the host.
+
+=head2 password
+
+Optional argument that can get passed into the L<Net::SFTP> constructor.
+Represents the authentication password credential for the host.
+
+=head2 debug
+
+Optional argument that can get passed into the L<Net::SFTP> constructor.
+Represents whether to print debug information or not.
+
+=head2 warn
+
+Optional argument that can get passed into the L<Net::SFTP> constructor.
+An anonymous sub that gets called when warnings are generated.
+
+=head2 ssh_args
+
+Optional argument that can get passed into the L<Net::SFTP> constructor.
+Additional SSH connection arguments.
 
 =head1 DEPENDENCIES
 
+L<Net::SFTP>
 L<HealthCheck::Diagnostic>
 
 =head1 CONFIGURATION AND ENVIRONMENT
