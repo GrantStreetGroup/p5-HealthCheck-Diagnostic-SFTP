@@ -7,6 +7,8 @@ use parent 'HealthCheck::Diagnostic';
 use strict;
 use warnings;
 
+use Carp;
+
 sub new {
     my ($class, @params) = @_;
 
@@ -20,6 +22,27 @@ sub new {
     );
 }
 
+sub check {
+    my ($self, %params) = @_;
+    # The host is the only required parameter.
+    croak "No host" unless $params{host};
+
+    return $self->SUPER::check(%params);
+}
+
+sub run {
+    my ($self, %params) = @_;
+    my $host     = $params{host};
+
+    # Get our description of the connection.
+    my $description = "$host SFTP";
+
+    return {
+        status => 'OK',
+        info   => "Successful connection for $description",
+    };
+}
+
 1;
 __END__
 
@@ -27,7 +50,15 @@ __END__
 
 =head1 DESCRIPTION
 
+This diagnostic allows a process to test SFTP connectivity to a server.
+You can specify the host and the rest is handled by the diagnostic.
+
 =head1 ATTRIBUTES
+
+=head2 host
+
+The server name to connect to for the test.
+This is required.
 
 =head1 DEPENDENCIES
 
