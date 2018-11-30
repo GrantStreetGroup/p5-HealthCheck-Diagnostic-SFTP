@@ -94,6 +94,27 @@ __END__
 
 =head1 SYNOPSIS
 
+    use HealthCheck::Diagnostic::SFTP;
+
+    # Just check that we can connect to a host.
+    HealthCheck::Diagnostic::SFTP->check(
+        host => 'appws003-test3',
+        user => 'dveres',
+    );
+
+    # Check that the './history' file exists on the host.
+    HealthCheck::Diagnostic::SFTP->check(
+        host     => 'appws003-test3',
+        callback => sub {
+            my ($sftp)      = @_;
+            my ($directory) = @{ $sftp->ls('history') || [] };
+            return {
+                info   => 'Looking for "history" file.',
+                status => $directory ? 'OK' : 'CRITCAL',
+            };
+        },
+    );
+
 =head1 DESCRIPTION
 
 This diagnostic allows a process to test SFTP connectivity to a server.
@@ -117,8 +138,8 @@ This is required.
 =head2 callback
 
 An anonymous sub that can get run after a conneciton is made to the
-host. This sub takes in one argument, the L<Net::SFTP> instance that
-war recently created.
+host. This sub receives one argument, the L<Net::SFTP> instance that
+was recently created.
 
 =head2 user
 
