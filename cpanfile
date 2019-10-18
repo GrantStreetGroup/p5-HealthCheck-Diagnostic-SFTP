@@ -9,3 +9,6 @@ test_requires 'Test::MockModule';
 test_requires 'Test::Differences';
 
 1;
+on develop => sub {
+    requires 'Dist::Zilla::PluginBundle::Author::GSG::Internal';
+};
