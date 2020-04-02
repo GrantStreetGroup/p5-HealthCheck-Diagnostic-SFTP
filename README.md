@@ -4,7 +4,7 @@ HealthCheck::Diagnostic::SFTP - Check for SFTP access and operations in a Health
 
 # VERSION
 
-version 1.2.0.1
+version v1.2.2
 
 # SYNOPSIS
 
@@ -95,16 +95,8 @@ Grant Street Group <developers@grantstreet.com>
 
 # COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2018 - 2019 by Grant Street Group.  No
-license is granted to other entities.
+This software is Copyright (c) 2018 - 2020 by Grant Street Group.
 
-# CONTRIBUTORS
+This is free software, licensed under:
 
-- Authors:
-- (9) Brandon Messineo <brandon.messineo@grantstreet.com>
-- (2) Andrew Hewus Fresh <andrew.fresh@grantstreet.com>
-- Reviewers:
-- (1) Andrew Fresh <andrew.fresh@grantstreet.com> 
-- (1) Brandon Messineo <brandon.messineo@grantstreet.com> 
-- Deployers:
-- (6) Brandon Messineo <brandon.messineo@grantstreet.com>  
+    The Artistic License 2.0 (GPL Compatible)
