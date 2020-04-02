@@ -10,6 +10,10 @@ use warnings;
 use Carp;
 use Net::SFTP;
 
+# For some reason, without this in the cpanfile
+# Net::SFTP wouldn't install, so leave this note.
+require Net::SSH::Perl::Buffer;
+
 sub new {
     my ($class, @params) = @_;
 
