@@ -12,13 +12,13 @@ version v1.2.2
 
     # Just check that we can connect to a host.
     HealthCheck::Diagnostic::SFTP->check(
-        host => 'appws003-test3',
-        user => 'dveres',
+        host => 'sftp.example.com',
+        user => 'auser',
     );
 
     # Check that the './history' file exists on the host.
     HealthCheck::Diagnostic::SFTP->check(
-        host     => 'appws003-test3',
+        host     => 'sftp.example.com',
         callback => sub {
             my ($sftp)      = @_;
             my ($directory) = @{ $sftp->ls('history') || [] };
