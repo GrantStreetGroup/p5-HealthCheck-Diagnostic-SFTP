@@ -10,6 +10,10 @@ use warnings;
 use Carp;
 use Net::SFTP;
 
+# For some reason, without this in the cpanfile
+# Net::SFTP wouldn't install, so leave this note.
+require Net::SSH::Perl::Buffer;
+
 sub new {
     my ($class, @params) = @_;
 
@@ -98,13 +102,13 @@ __END__
 
     # Just check that we can connect to a host.
     HealthCheck::Diagnostic::SFTP->check(
-        host => 'appws003-test3',
-        user => 'dveres',
+        host => 'sftp.example.com',
+        user => 'auser',
     );
 
     # Check that the './history' file exists on the host.
     HealthCheck::Diagnostic::SFTP->check(
-        host     => 'appws003-test3',
+        host     => 'sftp.example.com',
         callback => sub {
             my ($sftp)      = @_;
             my ($directory) = @{ $sftp->ls('history') || [] };

@@ -4,7 +4,7 @@ HealthCheck::Diagnostic::SFTP - Check for SFTP access and operations in a Health
 
 # VERSION
 
-version 1.2.0.1
+version v1.2.2
 
 # SYNOPSIS
 
@@ -12,13 +12,13 @@ version 1.2.0.1
 
     # Just check that we can connect to a host.
     HealthCheck::Diagnostic::SFTP->check(
-        host => 'appws003-test3',
-        user => 'dveres',
+        host => 'sftp.example.com',
+        user => 'auser',
     );
 
     # Check that the './history' file exists on the host.
     HealthCheck::Diagnostic::SFTP->check(
-        host     => 'appws003-test3',
+        host     => 'sftp.example.com',
         callback => sub {
             my ($sftp)      = @_;
             my ($directory) = @{ $sftp->ls('history') || [] };
@@ -95,16 +95,8 @@ Grant Street Group <developers@grantstreet.com>
 
 # COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2018 - 2019 by Grant Street Group.  No
-license is granted to other entities.
+This software is Copyright (c) 2018 - 2020 by Grant Street Group.
 
-# CONTRIBUTORS
+This is free software, licensed under:
 
-- Authors:
-- (9) Brandon Messineo <brandon.messineo@grantstreet.com>
-- (2) Andrew Hewus Fresh <andrew.fresh@grantstreet.com>
-- Reviewers:
-- (1) Andrew Fresh <andrew.fresh@grantstreet.com> 
-- (1) Brandon Messineo <brandon.messineo@grantstreet.com> 
-- Deployers:
-- (6) Brandon Messineo <brandon.messineo@grantstreet.com>  
+    The Artistic License 2.0 (GPL Compatible)
