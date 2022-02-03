@@ -50,7 +50,7 @@ sub run {
     # Get our description of the connection.
     my $user        = $params{user};
     my $name        = $params{name};
-    my $timeout     = $params{timeout} // 10;
+    my $timeout     = $params{timeout} // 3;
     my $target      = ( $user ? $user.'@' : '' ).$host;
     my $description = $name ? "$name ($target) SFTP" : "$target SFTP";
 
@@ -185,7 +185,7 @@ Additional SSH connection arguments.
 
 Set for the C<ConnectTimeout> value passed to the C<ssh_args> C<options> setting
 in L<Net::SSH::Perl>. Will not be set if an existing C<ConnectTimeout> value has
-been set. Defaults to 10.
+been set. Defaults to 3.
 
 =head1 DEPENDENCIES
 
