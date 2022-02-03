@@ -184,8 +184,9 @@ Additional SSH connection arguments.
 =head2 timeout
 
 Set for the C<ConnectTimeout> value passed to the C<ssh_args> C<options> setting
-in L<Net::SSH::Perl>. Will not be set if an existing C<ConnectTimeout> value has
-been set. Defaults to 3.
+in L<Net::SSH::Perl>.
+Will not be set if an existing C<ConnectTimeout> value has been set.
+Defaults to 3.
 
 =head1 DEPENDENCIES
 
