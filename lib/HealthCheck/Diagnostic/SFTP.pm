@@ -59,6 +59,7 @@ sub run {
 
     unless ( grep { $_ =~ /^ConnectTimeout / } @$options ) {
         push @$options, "ConnectTimeout $timeout";
+        $ssh_args->{options} = $options;
     }
 
     # Try to connect to the host.
