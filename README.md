@@ -4,7 +4,7 @@ HealthCheck::Diagnostic::SFTP - Check for SFTP access and operations in a Health
 
 # VERSION
 
-version v1.2.2
+version v1.4.0
 
 # SYNOPSIS
 
@@ -12,8 +12,9 @@ version v1.2.2
 
     # Just check that we can connect to a host.
     HealthCheck::Diagnostic::SFTP->check(
-        host => 'sftp.example.com',
-        user => 'auser',
+        host    => 'sftp.example.com',
+        user    => 'auser',
+        timeout => 3, # default
     );
 
     # Check that the './history' file exists on the host.
@@ -80,6 +81,13 @@ An anonymous sub that gets called when warnings are generated.
 Optional argument that can get passed into the [Net::SFTP](https://metacpan.org/pod/Net%3A%3ASFTP) constructor.
 Additional SSH connection arguments.
 
+## timeout
+
+Set for the `ConnectTimeout` value passed to the `ssh_args` `options` setting
+in [Net::SSH::Perl](https://metacpan.org/pod/Net%3A%3ASSH%3A%3APerl).
+Will not be set if an existing `ConnectTimeout` value has been set.
+Defaults to 3.
+
 # DEPENDENCIES
 
 [Net::SFTP](https://metacpan.org/pod/Net%3A%3ASFTP)
@@ -95,7 +103,7 @@ Grant Street Group <developers@grantstreet.com>
 
 # COPYRIGHT AND LICENSE
 
-This software is Copyright (c) 2018 - 2020 by Grant Street Group.
+This software is Copyright (c) 2018 - 2022 by Grant Street Group.
 
 This is free software, licensed under:
 
