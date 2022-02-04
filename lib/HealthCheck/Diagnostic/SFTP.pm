@@ -115,7 +115,7 @@ __END__
     HealthCheck::Diagnostic::SFTP->check(
         host    => 'sftp.example.com',
         user    => 'auser',
-        timeout => 10, # default
+        timeout => 3, # default
     );
 
     # Check that the './history' file exists on the host.
