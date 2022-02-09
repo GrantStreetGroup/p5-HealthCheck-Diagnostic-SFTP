@@ -16,6 +16,9 @@ $mock->mock( new => sub {
     die "Net::SSH: Bad host name: $host"
         if $host eq 'inaccessible-host';
 
+    # Slow hosts should be successfully timed out.
+    sleep 5 if $host eq 'slow-host';
+
     $last_sftp = bless( \%params, 'Net::SFTP' );
     return $last_sftp;
 } );
@@ -133,6 +136,12 @@ my $run_check_or_error = sub {
         'Connection error brings up CRITICAL status.';
     like $result->[1], qr/Net::SSH: Bad host name: inaccessible-host/,
         'Connection error is displayed in info message.';
+
+    $result = $run_check_or_error->( host => 'slow-host' );
+    is $result->[0], 'CRITICAL',
+        'Connection timeout brings up CRITICAL status.';
+    like $result->[1], qr/Error for slow-host SFTP: timeout after 3 seconds\./,
+        'Connection timeout error is displayed in info message.';
 }
 
 # Test that we properly support callbacks.
@@ -176,7 +185,8 @@ my $run_check_or_error = sub {
 }
 
 # Test the timeout attribute gets passed to Net::SFTP properly.
-{
+SKIP: {
+    skip 'ConnectTimeout not yet supported by Net::SSH::Perl';
     my $diagnostic = HealthCheck::Diagnostic::SFTP->new(
         host => 'host-with-default-timeout-and-no-ssh-args',
     );
