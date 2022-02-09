@@ -124,6 +124,13 @@ my $run_check_or_error = sub {
         'Host, user, and name are in the description when specified.';
     is $run_check_or_error->(
         host => 'good-host',
+        user => 'user',
+        name => 'Type1',
+        ssh_args => { port => 42 },
+    )->[1], 'Successful connection for Type1 (user@good-host:42) SFTP',
+        'Host, port, user, and name are in the description when specified.';
+    is $run_check_or_error->(
+        host => 'good-host',
         name => 'Type2',
     )->[1], 'Successful connection for Type2 (good-host) SFTP',
         'Host and name are in the description when specified.';

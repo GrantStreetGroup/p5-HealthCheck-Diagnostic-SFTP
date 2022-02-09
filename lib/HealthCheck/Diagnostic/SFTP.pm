@@ -46,16 +46,22 @@ sub run {
     my ($self, %params) = @_;
     my $host     = $params{host};
     my $callback = $params{callback};
+    my $ssh_args = $params{ssh_args} // {};
 
     # Get our description of the connection.
+    my $port        = $ssh_args->{port};
     my $user        = $params{user};
     my $name        = $params{name};
     my $timeout     = $params{timeout} // 3;
-    my $target      = ( $user ? $user.'@' : '' ).$host;
-    my $description = $name ? "$name ($target) SFTP" : "$target SFTP";
+    my $target      = sprintf(
+        "%s%s%s",
+        $user ? $user . '@' : '',
+        $host,
+        $port ? ":$port" : '',
+    );
 
-    my $ssh_args = $params{ssh_args}    // {};
-    my $options  = $ssh_args->{options} // [];
+    my $description = $name ? "$name ($target) SFTP" : "$target SFTP";
+    my $options = $ssh_args->{options} // [];
 
     # Once the SSH ConnectTimeout option is supported, we can re-enable this:
     # https://rt.cpan.org/Public/Bug/Display.html?id=66433
