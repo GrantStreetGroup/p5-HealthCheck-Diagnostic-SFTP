@@ -4,7 +4,7 @@ HealthCheck::Diagnostic::SFTP - Check for SFTP access and operations in a Health
 
 # VERSION
 
-version v1.4.0
+version v1.4.1
 
 # SYNOPSIS
 
@@ -83,9 +83,8 @@ Additional SSH connection arguments.
 
 ## timeout
 
-Set for the `ConnectTimeout` value passed to the `ssh_args` `options` setting
-in [Net::SSH::Perl](https://metacpan.org/pod/Net%3A%3ASSH%3A%3APerl).
-Will not be set if an existing `ConnectTimeout` value has been set.
+Sets up an `ALRM` signal handler used to timeout the initial connection attempt
+after the number of seconds provided.
 Defaults to 3.
 
 # DEPENDENCIES
