@@ -79,13 +79,13 @@ sub run {
     $args{ssh_args} = $ssh_args;
 
     local $@;
+    local $SIG{ALRM} = sub { die "timeout after $timeout seconds.\n" };
+    alarm $timeout;
     eval {
         local $SIG{__DIE__};
-        local $SIG{ALRM} = sub { die "timeout after $timeout seconds.\n" };
-        alarm $timeout;
         $sftp = Net::SFTP->new( $host, %args );
-        alarm 0;
     };
+    alarm 0;
     return {
         status => 'CRITICAL',
         info   => "Error for $description: $@",
