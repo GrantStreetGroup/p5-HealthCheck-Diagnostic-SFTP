@@ -4,7 +4,7 @@ HealthCheck::Diagnostic::SFTP - Check for SFTP access and operations in a Health
 
 # VERSION
 
-version v1.4.1
+version v1.4.2
 
 # SYNOPSIS
 
