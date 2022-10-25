@@ -4,7 +4,7 @@ HealthCheck::Diagnostic::SFTP - Check for SFTP access and operations in a Health
 
 # VERSION
 
-version v1.4.2
+version v1.5.0
 
 # SYNOPSIS
 
@@ -14,7 +14,7 @@ version v1.4.2
     HealthCheck::Diagnostic::SFTP->check(
         host    => 'sftp.example.com',
         user    => 'auser',
-        timeout => 3, # default
+        timeout => 10, # default
     );
 
     # Check that the './history' file exists on the host.
@@ -85,7 +85,7 @@ Additional SSH connection arguments.
 
 Sets up an `ALRM` signal handler used to timeout the initial connection attempt
 after the number of seconds provided.
-Defaults to 3.
+Defaults to 10.
 
 # DEPENDENCIES
 
